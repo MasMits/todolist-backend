@@ -1,10 +1,11 @@
 import { injectable, inject } from "inversify";
-import { Todo } from "../models/Todo";
+import { Todo } from "../VO/Todo";
 import { TodoRepository } from "../../Infa/repositories/TodoRepository";
+import {ITodoRepository} from "../../Infa/repositories/ITodoRepository";
 
 @injectable()
 export class TodoService {
-    constructor(@inject(TodoRepository) private todoRepository: TodoRepository) {}
+    constructor(@inject(TodoRepository) private todoRepository: ITodoRepository) {}
 
     public async getAllTodos(): Promise<Todo[]> {
         return this.todoRepository.getAll();

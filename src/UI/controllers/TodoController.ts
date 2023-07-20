@@ -1,12 +1,20 @@
-import { injectable, inject } from "inversify";
+import { inject } from "inversify";
 import { Request, Response } from "express";
-import { TodoService } from "../../Domain/services/TodoService";
+import { AppTodoService } from "../../App/services/AppTodoService";
+import {
+    controller, httpGet, BaseHttpController, httpPost, request, response
+} from "inversify-express-utils";
 
-@injectable()
-export class TodoController {
-    constructor(@inject(TodoService) private todoService: TodoService) {}
+@controller("/todo")
+export class TodoController extends BaseHttpController {
+    constructor(
+        @inject(AppTodoService) private todoService: AppTodoService
+    ) {
+        super();
+    }
 
-    public async getAllTodos(req: Request, res: Response): Promise<void> {
+    @httpGet('/tasks')
+    public async getAllTodos(@request() req: Request, @response() res: Response): Promise<void> {
         try {
             const todos = await this.todoService.getAllTodos();
             res.status(200).json(todos);
@@ -15,6 +23,7 @@ export class TodoController {
         }
     }
 
+    @httpPost('/tasks')
     public async createTodo(req: Request, res: Response): Promise<void> {
         try {
             const { title, description } = req.body;
@@ -24,6 +33,4 @@ export class TodoController {
             res.status(500).json({ error: error});
         }
     }
-
-    // Додайте інші методи контролера тут
 }
